@@ -524,13 +524,12 @@ key on UpdateManager using UpdateManager#key=
 
       def visit_Arel_Nodes_NotEqual o, a
         right = o.right
-
         a = o.left if Arel::Attributes::Attribute === o.left
-        if right.nil?
-          "#{visit o.left, a} IS NOT NULL"
-        else
-          "#{visit o.left, a} != #{visit right, a}"
+        conditions = ["#{visit o.left, a} IS NOT NULL"]
+        unless right.nil?
+          conditions << "#{visit o.left, a} != #{visit right, a}"
         end
+        conditions.join(" AND ")
       end
 
       def visit_Arel_Nodes_As o, a
